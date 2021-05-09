@@ -1,3 +1,7 @@
+# Folders
+# Requirements and specifcation documents
+/requirements/*
+
 # Files
 # Scratchpad file
 scrachpad.rb
