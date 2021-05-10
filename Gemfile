@@ -12,3 +12,5 @@ gem "json", "~> 2.5"
 
 
 gem "tty-prompt", "~> 0.23.1"
+
+gem "faraday", "~> 1.4"
