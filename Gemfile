@@ -9,3 +9,6 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 gem "rspec", "~> 3.10"
 
 gem "json", "~> 2.5"
+
+
+gem "tty-prompt", "~> 0.23.1"
