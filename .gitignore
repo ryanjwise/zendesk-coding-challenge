@@ -5,3 +5,6 @@
 # Files
 # Scratchpad file
 scrachpad.rb
+
+# Credentials File
+/data/credentials.json
