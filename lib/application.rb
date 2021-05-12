@@ -9,7 +9,18 @@ class Application
   end
 
   def run
-    response = @api.get_request('tickets')
-    pp response
+    confirm_user?
+  end
+  def confirm_user?
+    update = true
+    while update
+      update = get_input(
+        "You are currently connecting to the #{@user.subdomain} subdomain, would you like to update credentials?",
+        "confirm",
+        false
+      )
+      @user.create_user if update
+    end
+  end
   end
 end
