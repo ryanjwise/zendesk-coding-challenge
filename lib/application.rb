@@ -10,6 +10,13 @@ class Application
 
   def run
     confirm_user?
+    response = @api.get_request('tickets?page[size]=25')
+    populate_tickets(JSON.parse(response.body, :symbolize_names => true))
+  def populate_tickets(json)
+    json[:tickets].each do |ticket|
+      @tickets << ticket
+    end
+  end
   end
   def confirm_user?
     update = true
