@@ -11,15 +11,6 @@ class User
     load_user
   end
 
-  def get_input(query, type="ask")
-    case type
-    when "ask"
-      @@prompt.ask("What is your #{query}?", required: true)
-    when "mask"
-      @@prompt.mask("What is your #{query}?", required: true)
-    end
-  end
-
   def load_user
     create_user unless File.exist?(@file_path)
 
