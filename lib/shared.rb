@@ -13,4 +13,8 @@ module Shared
       end
     end
   end
+
+  def get_choice(query, choices)
+    @@prompt.select(query, choices)
+  end
 end
