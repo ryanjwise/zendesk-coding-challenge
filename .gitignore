@@ -8,3 +8,8 @@ scrachpad.rb
 
 # Credentials File
 /data/credentials.json
+
+# Development Tests
+/data/header.json
+/data/body.json
+/data/status.json

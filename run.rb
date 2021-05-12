@@ -2,6 +2,7 @@
 
 require 'json'
 require 'tty-prompt'
+require 'tty-table'
 require 'faraday'
 require_relative './lib/shared'
 require_relative './lib/user'
