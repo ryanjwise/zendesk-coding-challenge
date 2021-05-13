@@ -3,7 +3,7 @@ class Application
   include Shared
 
   def initialize
-    @user = User.new()
+    @user = User.new
     @api = Api.new(@user.subdomain, @user.email, @user.password)
     @tickets = []
     @endpoint = 'tickets?page[size]=25'
@@ -17,23 +17,15 @@ class Application
     loop do
       response = @api.get_request(@endpoint)
       response_body = JSON.parse(response.body, symbolize_names: true)
-      populate_tickets(response_body) unless response_body[:links][:prev].nil?
-      puts '---'
-      pp response_body[:meta][:has_more]
-      pp response_body[:links][:prev]
-      pp response_body[:links][:next]
-      puts '---'
-      pp response.status
-      puts '---'
-      # system('clear')
+      has_more = response_body[:meta][:has_more]
+      links = response_body[:links]
+      @tickets = response_body[:tickets] unless links[:prev].nil?
+      system('clear')
       build_table
-      set_links(response_body)
+      has_more ? update_links(links) : (puts "No more tickets #{@page_direction}")
       menu = true
-      while menu
-        menu = process_menu(menu_options(response_body[:meta][:has_more]), response_body)
-      end
+      menu = process_menu(menu_options(has_more)) while menu
     end
-
   end
 
   def menu_options(has_more)
@@ -45,14 +37,12 @@ class Application
     get_choice('What would you like to do?', choices)
   end
 
-  def set_links(response)
-    if response[:meta][:has_more]
-      @link_forward = response[:links][:next].split('/').last
-      @link_back = response[:links][:prev].split('/').last
-    end
+  def update_links(links)
+    @link_forward = links[:next].split('/').last
+    @link_back = links[:prev].split('/').last
   end
 
-  def process_menu(selection, response)
+  def process_menu(selection)
     case selection
     when 1
       selection = select_ticket
@@ -74,6 +64,7 @@ class Application
   def select_ticket
     choices = {}
     choices[:Cancel] = 'Cancel'
+    # Populate selection menu with menu text & return value
     @tickets.each_with_index { |ticket, index| choices["#{ticket[:id]} - #{ticket[:subject]}"] = index }
     get_choice('Which Ticket', choices)
   end
@@ -87,13 +78,6 @@ class Application
     puts "Updated: #{ticket[:updated_at]}"
     puts "Description: \n\n#{ticket[:description]}"
     puts
-  end
-
-  def populate_tickets(json)
-    @tickets = []
-    json[:tickets].each do |ticket|
-      @tickets << ticket
-    end
   end
 
   def build_table
