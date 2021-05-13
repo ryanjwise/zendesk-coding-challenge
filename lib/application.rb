@@ -1,5 +1,4 @@
 class Application
-
   include Shared
 
   def initialize
@@ -28,6 +27,8 @@ class Application
     end
   end
 
+  # Menu's
+
   def menu_options(has_more)
     choices = {}
     choices['View ticket'] = 1
@@ -35,11 +36,6 @@ class Application
     choices['Previous']    = 3 unless has_more == false && @page_direction == 'backward'
     choices['Quit']        = 4
     get_choice('What would you like to do?', choices)
-  end
-
-  def update_links(links)
-    @link_forward = links[:next].split('/').last
-    @link_back = links[:prev].split('/').last
   end
 
   def process_menu(selection)
@@ -61,6 +57,20 @@ class Application
     false
   end
 
+  def confirm_user?
+    update = true
+    while update
+      update = get_input(
+        "You are currently connecting to the #{@user.subdomain} subdomain, would you like to update credentials?",
+        'confirm',
+        false
+      )
+      @user.create_user if update
+    end
+  end
+
+  # Ticket Methods
+
   def select_ticket
     choices = {}
     choices[:Cancel] = 'Cancel'
@@ -80,8 +90,15 @@ class Application
     puts
   end
 
+  # Helper Methods
+
+  def update_links(links)
+    @link_forward = links[:next].split('/').last
+    @link_back = links[:prev].split('/').last
+  end
+
   def build_table
-    table = TTY::Table.new(header: ["ID", "Subject", "Priority", "Status", "Last Updated"])
+    table = TTY::Table.new(header: ['ID', 'Subject', 'Priority', 'Status', 'LastUpdated'])
     @tickets.each do |ticket|
       ticket[:priority] ||= 'n/a'
       # Remove time from datestamp and reverse order to DD/MM/YYYY
@@ -89,18 +106,6 @@ class Application
       ticket[:created_at] = ticket[:created_at].split('T').first.split('-').reverse.join('-')
       table << [ticket[:id], ticket[:subject], ticket[:priority], ticket[:status], ticket[:updated_at]]
     end
-    puts table.render(:ascii, padding: [0,1,0,1])
-  end
-
-  def confirm_user?
-    update = true
-    while update
-      update = get_input(
-        "You are currently connecting to the #{@user.subdomain} subdomain, would you like to update credentials?",
-        "confirm",
-        false
-      )
-      @user.create_user if update
-    end
+    puts table.render(:ascii, padding: [0, 1, 0, 1])
   end
 end

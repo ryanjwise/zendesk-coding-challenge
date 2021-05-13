@@ -21,11 +21,11 @@ class User
   end
 
   def create_user
-    puts "No User Credentials Stored, please input user credentials"
-    user = { 
-      subdomain: get_input("Subdomain Path"),
-      email: get_input("Email Address"),
-      password: get_input("Password", "mask")
+    puts 'No stored user credentials found, please input user credentials:'
+    user = {
+      subdomain: get_input('Subdomain Path'),
+      email: get_input('Email Address'),
+      password: get_input('Password', 'mask')
     }
     File.open(@file_path, 'w+') # Create new file with read/write \
     File.write(@file_path, user.to_json)
