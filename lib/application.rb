@@ -6,38 +6,50 @@ class Application
     @user = User.new()
     @api = Api.new(@user.subdomain, @user.email, @user.password)
     @tickets = []
+    @endpoint = 'tickets?page[size]=25'
+    @page_direction = nil
+    @link_back = nil
+    @link_forward = nil
   end
 
   def run
     confirm_user?
-    endpoint = 'tickets?page[size]=25'
     loop do
-      unless endpoint.nil?
-        response = @api.get_request(endpoint)
-        response_body = JSON.parse(response.body, symbolize_names: true)
-        populate_tickets(response_body)
-        puts '---'
-        pp response_body[:meta]
-        pp response_body[:links]
-        puts '---'
-        pp response.status
-        puts '---'
-        # system('clear')
-        build_table
+      response = @api.get_request(@endpoint)
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      populate_tickets(response_body) unless response_body[:links][:prev].nil?
+      puts '---'
+      pp response_body[:meta][:has_more]
+      pp response_body[:links][:prev]
+      pp response_body[:links][:next]
+      puts '---'
+      pp response.status
+      puts '---'
+      # system('clear')
+      build_table
+      set_links(response_body)
+      menu = true
+      while menu
+        menu = process_menu(menu_options(response_body[:meta][:has_more]), response_body)
       end
-      endpoint = process_menu(menu_options, response_body)
     end
 
   end
 
-  def menu_options
-    choices = {
-      'View ticket' => 1,
-      'Next Page' => 2,
-      'Previous' => 3,
-      'Quit' => 4
-    }
+  def menu_options(has_more)
+    choices = {}
+    choices['View ticket'] = 1
+    choices['Next Page']   = 2 unless has_more == false && @page_direction == 'forward'
+    choices['Previous']    = 3 unless has_more == false && @page_direction == 'backward'
+    choices['Quit']        = 4
     get_choice('What would you like to do?', choices)
+  end
+
+  def set_links(response)
+    if response[:meta][:has_more]
+      @link_forward = response[:links][:next].split('/').last
+      @link_back = response[:links][:prev].split('/').last
+    end
   end
 
   def process_menu(selection, response)
@@ -45,15 +57,18 @@ class Application
     when 1
       selection = select_ticket
       display_ticket(selection) unless selection == 'Cancel'
-      nil
+      return true
     when 2
-      response[:links][:next].split('/').last
+      @endpoint = @link_forward
+      @page_direction = 'forward'
     when 3
-      response[:links][:prev].split('/').last
+      @endpoint = @link_back
+      @page_direction = 'backward'
     when 4
       puts "\nSee you next time!"
       exit(0)
     end
+    false
   end
 
   def select_ticket
