@@ -61,12 +61,16 @@ class Application
   def confirm_user?
     update = true
     while update
+      # Query user with default set to false
       update = get_input(
         "You are currently connecting to the #{@user.subdomain} subdomain, would you like to update credentials?",
         'confirm',
         false
       )
-      @user.create_user if update
+      if update
+        @user.create_user
+        @api = Api.new(@user.subdomain, @user.email, @user.password)
+      end
     end
   end
 

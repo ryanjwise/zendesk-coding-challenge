@@ -12,22 +12,31 @@ class User
   end
 
   def load_user
-    create_user unless File.exist?(@file_path)
-
-    json_data = JSON.parse(File.read(@file_path), symbolize_names: true)
-    @subdomain = json_data[:subdomain]
-    @email = json_data[:email]
-    @password = json_data[:password]
+    if File.exist?(@file_path)
+      json_data = JSON.parse(File.read(@file_path), symbolize_names: true)
+      @subdomain = json_data[:subdomain]
+      @email = json_data[:email]
+      @password = json_data[:password]
+    else
+      puts 'No stored user credentials found, please input user credentials:'
+      create_user
+    end
   end
 
   def create_user
-    puts 'No stored user credentials found, please input user credentials:'
+    @subdomain = get_input('Subdomain Path')
+    @email = get_input('Email Address')
+    @password = get_input('Password', 'mask')
+    save_user
+  end
+
+  def save_user
     user = {
-      subdomain: get_input('Subdomain Path'),
-      email: get_input('Email Address'),
-      password: get_input('Password', 'mask')
+      subdomain: @subdomain,
+      email: @email,
+      password: @password
     }
-    File.open(@file_path, 'w+') # Create new file with read/write \
+    File.open(@file_path, 'w+') # Create new file with read/write permissions
     File.write(@file_path, user.to_json)
   end
 end
