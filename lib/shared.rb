@@ -1,7 +1,7 @@
 module Shared
   @@prompt = TTY::Prompt.new
 
-  def get_input(query, type="ask", positive=true)
+  def get_input(query, type = 'ask', positive = true)
     case type
     when "ask"
       @@prompt.ask("What is your #{query}?", required: true)

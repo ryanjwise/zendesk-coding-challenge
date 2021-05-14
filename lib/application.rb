@@ -19,6 +19,7 @@ class Application
       response_body = JSON.parse(response.body, symbolize_names: true)
       has_more = response_body[:meta][:has_more]
       links = response_body[:links]
+      # Unless statement prevents population of empty list when has_more evals to true when paging backward.
       @tickets = response_body[:tickets] unless links[:prev].nil?
       system('clear')
       build_table
@@ -79,7 +80,7 @@ class Application
   def select_ticket
     choices = {}
     choices[:Cancel] = 'Cancel'
-    # Populate selection menu with menu text & return value
+    # Populate selection menu with menu text & return values
     @tickets.each_with_index { |ticket, index| choices["#{ticket[:id]} - #{ticket[:subject]}"] = index }
     get_choice('Which Ticket', choices)
   end
