@@ -15,6 +15,7 @@ class Application
     confirm_user?
     loop do
       response = @api.get_request(@endpoint)
+      @api.evaluate_response(response.status)
       response_body = JSON.parse(response.body, symbolize_names: true)
       has_more = response_body[:meta][:has_more]
       links = response_body[:links]
