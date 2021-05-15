@@ -11,11 +11,11 @@
 - [Screenshots](#screenshots)
 - [Setup](#setup)
 - [Usage](#usage)
-- [Automated Tests](#tests)
+- [Automated Tests](#automated-tests)
 - [Project Status](#project-status)
 - [Room for Improvement](#room-for-improvement)
 - [Acknowledgements](#acknowledgements)
-- [Contact](#contact)
+- [Contact Me](#contact-me)
 
 ## General Information
 
