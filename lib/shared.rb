@@ -15,6 +15,6 @@ module Shared
   end
 
   def get_choice(query, choices)
-    @@prompt.select(query, choices)
+    @@prompt.select(query, choices, cycle: true)
   end
 end
