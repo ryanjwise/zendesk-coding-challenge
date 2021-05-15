@@ -73,6 +73,8 @@ For testing purposes dummy credentials have been included in the  `credentials.J
 
 When first launching the application it will confirm whether you wish to connect to the saved subdomain, then once either new credentials have been entered or existing credentials are accepted an API call will be made to the `tickets` endpoint. Returning at most 25 tickets. From there a user can either select a ticket to view more information or continue to page through tickets in sets of 25.
 
+**N.B:** Tables will not display correctly if terminal is less than 80 characters wide.
+
 ## Automated Tests
 
 Some automated unit testing has been included. Before running the tests, `bundle install` must have been run to pull down the required dependencies. For tests to work correctly `/data/credentials.json` must be present and populated. To this end, the file is included in the repository pre-populated with dummy data.
@@ -89,6 +91,7 @@ Project is: _complete_. Whilst further features could be added, and current func
 
 ## Room for Improvement
 
+- Remove current requirement for terminal to be greater than 80 characters wide to display tables correctly.
 - Encryption and Decryption of stored user credentials
 - Local saving of tickets to allow viewing in the event API is unavailable
 - Further breakdown of methods to allow more thorough unit testing
