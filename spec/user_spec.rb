@@ -21,11 +21,11 @@ RSpec.describe User do
         expect(user.subdomain).to be_truthy
       end
 
-      it 'should correctly populate subdomain' do
+      it 'should correctly populate email' do
         expect(user.email).to be_truthy
       end
 
-      it 'should correctly populate subdomain' do
+      it 'should correctly populate password' do
         expect(user.password).to be_truthy
       end
     end
