@@ -22,7 +22,7 @@ class Application
       # Unless statement prevents population of empty list when has_more evals to true when paging backward.
       @tickets = response_body[:tickets] unless links[:prev].nil?
       system('clear')
-      build_table
+      build_table('all')
       has_more ? update_links(links) : (puts "No more tickets #{@page_direction}")
       menu = true
       menu = process_menu(menu_options(has_more)) while menu
@@ -36,6 +36,7 @@ class Application
     choices['View ticket'] = 1
     choices['Next Page']   = 2 unless has_more == false && @page_direction == 'forward'
     choices['Previous']    = 3 unless has_more == false && @page_direction == 'backward'
+    choices['Show Closed'] = 5
     choices['Quit']        = 4
     get_choice('What would you like to do?', choices)
   end
@@ -55,6 +56,8 @@ class Application
     when 4
       puts "\nSee you next time!"
       exit(0)
+    when 5
+      build_table('Closed')
     end
     false
   end
@@ -79,7 +82,7 @@ class Application
 
   def select_ticket
     choices = {}
-    choices[:Cancel] = 'Cancel'
+    choices[:Cancel] = 'cancel'
     # Populate selection menu with menu text & return values
     @tickets.each_with_index { |ticket, index| choices["#{ticket[:id]} - #{ticket[:subject]}"] = index }
     get_choice('Which Ticket', choices)
@@ -103,9 +106,19 @@ class Application
     @link_back = links[:prev].split('/').last
   end
 
-  def build_table
+  def build_table(type)
+    tickets = []
     table = TTY::Table.new(header: ['ID', 'Subject', 'Priority', 'Status', 'LastUpdated'])
-    @tickets.each do |ticket|
+    tickets = @tickets if type == 'all'
+    if type == 'closed'
+      @tickets.each do |ticket|
+        if ticket[:status] == "closed"
+          tickets << ticket
+        end
+      end 
+    end
+    
+    tickets.each do |ticket|
       ticket[:priority] ||= 'n/a'
       # Remove time from datestamp and reverse order to DD/MM/YYYY
       ticket[:updated_at] = ticket[:updated_at].split('T').first.split('-').reverse.join('-')
